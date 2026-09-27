@@ -1,0 +1,8 @@
+Meldungen speichern => Ordner erstellen wenn er noch nicht existiert
+Zwischenstand speichern als .Tur
+Round viemodel und LayoutRoot.Datacontect wird nur beim einladen geändert
+export der Rangliste -> Partner exportiert als Turnierprogramm2.Models.adult Pascale
+messagebox am anfang
+
+rouncviewcontrol next round
+ this.nextRound = finishRoundAction; im konstruktor

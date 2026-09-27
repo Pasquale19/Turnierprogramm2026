@@ -1,0 +1,60 @@
+﻿<Window x:Class="Turnierprogramm2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Turnierprogramm2"
+        xmlns:local2="clr-namespace:Turnierprogramm2.UserControls"
+         xmlns:localVM="clr-namespace:Turnierprogramm2.ViewModel"
+         xmlns:localViews="clr-namespace:Turnierprogramm2.Views"
+        mc:Ignorable="d"
+        
+        Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <!--<DataTemplate DataType="{x:Type localVM:RoundViewModel}">
+            <localViews:RoundViewControl Games="{Binding Games}" NextRound="{Binding nextRound}"/>
+            
+        </DataTemplate>-->
+        <DataTemplate DataType="{x:Type localVM:SpielerListeViewModel}">
+            <local2:SpielerListe Player="{Binding Spielerliste}"/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type localVM:ErwSpielerListeViewModel}">
+            <local2:SpielerListe Player="{Binding Spielerliste}"/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type localVM:RoundCollectionViewModel}">
+            <localViews:RoundCollectionViewControl RoundVMCollection="{Binding Runden}"/>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="120" MaxWidth="160"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+          
+        <ItemsControl ItemsSource="{Binding PageViewModels}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Content="{Binding Name}"
+                                Command="{Binding DataContext.ChangePageCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                CommandParameter="{Binding }"
+                                Margin="2,5"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <StackPanel Grid.Column="0" VerticalAlignment="Bottom">
+            <Button  Command="{Binding openRanglisteCmd}">
+            open Rangliste
+        </Button>
+            <Button  Command="{Binding saveTurnierCmd}">
+               save Turnier
+            </Button>
+            <Button  Command="{Binding LoadTurnierCmd}">
+                Load Turnier
+            </Button>
+        </StackPanel>
+        
+        
+        
+        <ContentPresenter Content="{Binding currentPageViewModel}" Grid.Column="1" Margin="10"></ContentPresenter>
+    </Grid>
+</Window>

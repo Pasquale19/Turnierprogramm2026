@@ -1,0 +1,21 @@
+﻿<Window x:Class="Turnierprogramm2.Views.RanglisteView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Turnierprogramm2.Views"
+         xmlns:local2="clr-namespace:Turnierprogramm2.UserControls"
+        mc:Ignorable="d"
+        Title="RanglisteView" Height="450" Width="800">
+    <Grid x:Name="LayoutRoot">
+        <TabControl>
+            <TabItem Header="Kinder">
+                <local2:SpielerListe Player="{Binding Player[0]}" FileName="RanglisteKinder"></local2:SpielerListe>
+            </TabItem>
+            <TabItem Header="Erwachsene">
+                <local2:SpielerListe Player="{Binding Player[1]}" FileName="RanglisteErwachsene"></local2:SpielerListe>
+            </TabItem>
+        </TabControl>
+        
+    </Grid>
+</Window>

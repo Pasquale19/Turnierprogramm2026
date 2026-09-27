@@ -1,0 +1,103 @@
+﻿<UserControl x:Class="Turnierprogramm2.Views.RoundViewControl"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Turnierprogramm2.Views"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+              xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:j="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:conv="clr-namespace:Turnierprogramm2.Utilities"     
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"   >
+    <UserControl.Resources>
+        <conv:ResultConverter x:Key="ResConv"/>
+        <conv:BooleanInverterConverter x:Key="NoConv"/>
+        <conv:BoolToVisConverter x:Key="BoolToVisConv"/>
+        <conv:ValueConverterGroup x:Key="InvertAndVisibilitate">
+            <conv:BooleanInverterConverter/>
+            <conv:BoolToVisConverter/>
+        </conv:ValueConverterGroup>
+    </UserControl.Resources>
+    <Grid x:Name="LayoutRoot" DataContext="{Binding parent}">
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+        </Grid.RowDefinitions>
+        <DataGrid Name="dg" ItemsSource="{Binding Games}" AutoGenerateColumns="False"  CanUserAddRows="False"   CanUserDeleteRows="False" IsReadOnly="{Binding isFinished}">
+            <DataGrid.ItemContainerStyle>
+                <Style TargetType="DataGridRow">
+                    <EventSetter Event="MouseDoubleClick" Handler="Row_DoubleClick"/>
+                </Style>
+            </DataGrid.ItemContainerStyle>
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <EventSetter Event="MouseDoubleClick" Handler="DataGridCell_MouseDoubleClick"/>
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="IDK1" Binding="{Binding Doppel1.Kind.ID }" IsReadOnly="True" Visibility="{Binding IsChecked,
+                                          Source={x:Reference checkBoxDeveloper}, Converter={StaticResource BoolToVisConv }}"/>
+                <DataGridTextColumn Header="Kind 1" Binding="{Binding Doppel1.Kind.Name}"/>
+                <DataGridTextColumn Header="IDE1" Binding="{Binding Doppel1.Adult.ID}"
+                                    IsReadOnly="True" Visibility="{Binding IsChecked,
+                                          Source={x:Reference checkBoxDeveloper}, Converter={StaticResource BoolToVisConv }}"/>
+                <DataGridTextColumn Header="Erwachsener 1" Binding="{Binding Doppel1.Adult.Name}"/>
+                <DataGridTextColumn Header="Sätze"  IsReadOnly="True">
+                    <DataGridTextColumn.Binding>
+                        <MultiBinding StringFormat="{}{0} : {1} :{2}">
+                            <Binding Path="Result[0]" FallbackValue="Error" NotifyOnSourceUpdated="True" />
+                            <Binding Path="Result[1]" FallbackValue="Error" NotifyOnSourceUpdated="True"/>
+                                                      
+                        </MultiBinding>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="IDK2" Binding="{Binding Doppel2.Kind.ID}"
+                                    IsReadOnly="True" Visibility="{Binding IsChecked,
+                                          Source={x:Reference checkBoxDeveloper}, Converter={StaticResource BoolToVisConv }}"/>
+                
+                <DataGridTextColumn Header="Kind 2" Binding="{Binding Doppel2.Kind.Name}"/>
+                <DataGridTextColumn Header="IDE2" Binding="{Binding Doppel2.Adult.ID}"
+                                    IsReadOnly="True" Visibility="{Binding IsChecked,
+                                          Source={x:Reference checkBoxDeveloper}, Converter={StaticResource BoolToVisConv }}"/>
+                <DataGridTextColumn Header="Erwachsener 2" Binding="{Binding Doppel2.Adult.Name}"/>
+                <DataGridTemplateColumn Header="Sätze" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ListView  ItemsSource="{Binding Sets}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding resultString}" Width="120" Height="10" FontSize="8"/>
+                                                                            </DataTemplate>
+                                </ListView.ItemTemplate>
+
+                            </ListView>
+
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                <TextBlock>Runde:</TextBlock>
+                <TextBlock Text="{Binding Runde,TargetNullValue='Oops, I am missing',FallbackValue='0'}" Width="20"></TextBlock>
+            </StackPanel>
+            <Button Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="Button_Click_Export">Export As Pdf</Button>
+            <Button Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="Button_Click_RoundNumber" Visibility="{Binding IsChecked, ElementName=checkBoxDeveloper, Converter={StaticResource BoolToVisConv }}">read Roundnumber</Button>
+            <Button Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Command="{Binding readGamesCmd}" Visibility="{Binding IsChecked, ElementName=checkBoxDeveloper, Converter={StaticResource BoolToVisConv }}">read Games</Button>
+            <!-- für Bindung an Viewmodel muss ebenfalls eine Bindung im RoundCollectionViewmodel erstellt werden-->
+            <Button Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Command="{Binding randomResultCmd}" Visibility="{Binding IsChecked, ElementName=checkBoxDeveloper, Converter={StaticResource BoolToVisConv }}">random Results</Button>
+            <Button Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Command="{Binding checkGamesCmd}">Kontrolliere Auslosung</Button>
+            <!--<Button Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="CheckBox_Click">switch Mode</Button>-->
+            <CheckBox Name="checkBoxDeveloper" Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" IsChecked="{Binding developerModeActive}">developer Mode</CheckBox>
+            <!--<Button Command="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type Window}}, Path=DataContext.Runden.readGamesCmd}" Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                read Games
+            </Button>-->
+        </StackPanel>
+        
+        <Button Name="btnFinish" Grid.Row="1" Click="Button_Click" HorizontalAlignment="Center" IsEnabled="{Binding isFinished ,Converter={StaticResource NoConv}}" Visibility="{Binding isFinished, Converter={StaticResource InvertAndVisibilitate }}">
+            > Finish</Button>
+    </Grid>
+</UserControl>

@@ -1,0 +1,7 @@
+﻿in Spieler.cs kann es zum Absturz kommen, wenn in einer Runde ein Nahme doppelt vergeben wird
+
+wenn in der ersten Runde Titus doppelt eingetragen wird und in der zweiten Runde ebenfalls wird in das Array Titus doppelt eingetragen in der zwieten Runde, trage ich dann einen falschen nicht im Turnier befindlichen Spieler ein wird die Auslosung akzeptiert
+
+=> es sollte die ID kontrolliert werden, da diese nicht überschrieben werden kann
+
+=> wird in der ersten Runde ein Name geändert wirkt sich das auf die InputView aus
