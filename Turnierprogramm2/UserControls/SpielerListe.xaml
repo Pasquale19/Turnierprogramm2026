@@ -53,9 +53,9 @@
             hold Shift, then click the second column.
                 </TextBlock>
             </StackPanel.ToolTip>
-            <Button Click="Button_Click_1" VerticalAlignment="Bottom">export Pdf</Button>
+          <!--  <Button Click="Button_Click_1" VerticalAlignment="Bottom">export Pdf</Button>-->
             <Button Click="Button_Click_Sort" VerticalAlignment="Bottom">Sort Rangliste</Button>
-            <!--<Button Click="Button_Click_2" VerticalAlignment="Bottom">export Pdf</Button>-->
+            <Button Click="Button_Click_ExportPdf" VerticalAlignment="Bottom">export Pdf 2</Button>
         </StackPanel>
     </Grid>
 </UserControl>

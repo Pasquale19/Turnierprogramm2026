@@ -62,7 +62,7 @@
                                     IsReadOnly="True" Visibility="{Binding IsChecked,
                                           Source={x:Reference checkBoxDeveloper}, Converter={StaticResource BoolToVisConv }}"/>
                 <DataGridTextColumn Header="Erwachsener 2" Binding="{Binding Doppel2.Adult.Name}"/>
-                <DataGridTemplateColumn Header="Sätze" Width="*">
+                <DataGridTemplateColumn Header="Sätze" Width="0.75*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ListView  ItemsSource="{Binding Sets}">
@@ -84,7 +84,16 @@
                 <TextBlock>Runde:</TextBlock>
                 <TextBlock Text="{Binding Runde,TargetNullValue='Oops, I am missing',FallbackValue='0'}" Width="20"></TextBlock>
             </StackPanel>
-            <Button Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="Button_Click_Export">Export As Pdf</Button>
+            <Button Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="Button_Click_Export">
+                <Button.ToolTip>
+                    <TextBlock>
+            Reduce the width of the window
+            before exporting.
+                    </TextBlock>
+                </Button.ToolTip>
+                Export As Pdf
+            
+            </Button>
             <Button Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="Button_Click_RoundNumber" Visibility="{Binding IsChecked, ElementName=checkBoxDeveloper, Converter={StaticResource BoolToVisConv }}">read Roundnumber</Button>
             <Button Margin="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" Command="{Binding readGamesCmd}" Visibility="{Binding IsChecked, ElementName=checkBoxDeveloper, Converter={StaticResource BoolToVisConv }}">read Games</Button>
             <!-- für Bindung an Viewmodel muss ebenfalls eine Bindung im RoundCollectionViewmodel erstellt werden-->

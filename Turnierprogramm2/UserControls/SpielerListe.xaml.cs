@@ -1,14 +1,15 @@
-﻿using iTextSharp.text.pdf;
-using iTextSharp.text;
+﻿using iTextSharp.text;
+using iTextSharp.text.pdf;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Turnierprogramm2.Models;
 using Turnierprogramm2.Utilities;
-using System.ComponentModel;
 
 namespace Turnierprogramm2.UserControls
 {
@@ -94,37 +95,22 @@ namespace Turnierprogramm2.UserControls
             toPDF.DataGrid2(dgUsers, file, file, false);
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private void Button_Click_ExportPdf(object sender, RoutedEventArgs e)
         {
-            List<int> VisibleColumnsIndex = new List<int>();
-            for (int i = 0; i < dgUsers.Columns.Count; i++)
-            {
-                if (dgUsers.Columns[i].Visibility == Visibility.Visible) VisibleColumnsIndex.Add(i);
-            }
-            int anzCol = VisibleColumnsIndex.Count;
-            //Creating iTextSharp Table from the DataTable data
-            PdfPTable pdfTable = new PdfPTable(anzCol);
-            pdfTable.DefaultCell.Padding = 3;
-            //pdfTable.WidthPercentage = 30;
-            //pdfTable.TotalWidth = 500;
+            // This respects the current sorting and filtering of the DataGrid.
+            List<Spieler> spielerListe = dgUsers.Items
+                .OfType<Spieler>()
+                .ToList();
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.DefaultExt = "";
+            dlg.FileName = "Rangliste";
+            dlg.Filter = "pdf Files|*.pdf";
 
-            pdfTable.HorizontalAlignment = Element.ALIGN_LEFT;
-            pdfTable.DefaultCell.BorderWidth = 1;
-            float[] ColumnWidth = new float[anzCol];
-
-            //Adding Header row
-            for (int i = 0; i < VisibleColumnsIndex.Count; i++)
-            {
-                DataGridColumn column = dgUsers.Columns[VisibleColumnsIndex[i]];
-                PdfPCell cell = new PdfPCell(new Phrase(column.Header.ToString()));
-                cell.BackgroundColor = new iTextSharp.text.BaseColor(209, 209, 209);    //Grundfarbe
-                pdfTable.AddCell(cell);
-                ColumnWidth[i] = (float)column.ActualWidth;
-            }
-
+            dlg.RestoreDirectory = true;
+            if (dlg.ShowDialog() != true) return;
+            string file = dlg.FileName;
+            toPDF.ExportSpielerToPdf(spielerListe, dlg.FileName);
           
-
-         
 
             }
 

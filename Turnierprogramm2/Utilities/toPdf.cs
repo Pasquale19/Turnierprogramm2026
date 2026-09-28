@@ -4,9 +4,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Windows;
 using System.Windows.Controls;
+using Turnierprogramm2.Models;
 
 namespace Turnierprogramm2.Utilities
 {
@@ -138,7 +140,7 @@ namespace Turnierprogramm2.Utilities
             string folderPath = dateiPfad;
             if (!File.Exists(folderPath))
             {
-                
+
             }
             //if (!Directory.Exists(folderPath))
             //{
@@ -224,7 +226,7 @@ namespace Turnierprogramm2.Utilities
                 PdfPCell cell = new PdfPCell(new Phrase(column.Header.ToString()));
                 cell.BackgroundColor = new iTextSharp.text.BaseColor(209, 209, 209);    //Grundfarbe
                 pdfTable.AddCell(cell);
-                ColumnWidth[i] = (float)column.ActualWidth;
+                ColumnWidth[i] = (float)column.ActualWidth*2;
             }
 
             //setting columnWidth
@@ -240,7 +242,7 @@ namespace Turnierprogramm2.Utilities
                     if (column.GetCellContent(row) is TextBlock)
                     {
                         TextBlock cellContent = column.GetCellContent(row) as TextBlock;
-                      
+
 
                         PdfPCell zelle = new PdfPCell(new Phrase(cellContent.Text));
                         //HintergrundFarbe
@@ -266,7 +268,7 @@ namespace Turnierprogramm2.Utilities
                         //Type ContentPresenter
                         if (column.GetCellContent(row) is ContentPresenter)
                         {
-                            
+
                             ContentPresenter pres = (ContentPresenter)column.GetCellContent(row);
                             string text = pres.Content.ToString();
                             pdfTable.AddCell(text);
@@ -287,7 +289,7 @@ namespace Turnierprogramm2.Utilities
 
 
             //remove Extension for safety and add Extension
-            string exportPath =dateiPfad+ (Path.HasExtension(dateiPfad) ? "": ".pdf");
+            string exportPath = dateiPfad + (Path.HasExtension(dateiPfad) ? "" : ".pdf");
             try
             {
                 using (FileStream stream = new FileStream(exportPath, FileMode.Create))
@@ -310,7 +312,128 @@ namespace Turnierprogramm2.Utilities
             {
                 MessageBox.Show("Export not succesfull");
             }
-           
+
         }
+
+        public static void ExportSpielerToPdf(
+        List<Spieler> spielerListe,
+        string fileName)
+        {
+            Document document = new Document(                PageSize.A4.Rotate(),                30f,                30f,                30f,                30f);
+
+            using (FileStream stream = new FileStream(
+                fileName,
+                FileMode.Create,
+                FileAccess.Write,
+                FileShare.None))
+            {
+                PdfWriter.GetInstance(document, stream);
+
+                document.Open();
+
+                Font titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16f, BaseColor.BLACK);
+
+                Font headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 9f, BaseColor.WHITE);
+
+                Font cellFont = FontFactory.GetFont(FontFactory.HELVETICA, 8f, BaseColor.BLACK);
+
+                Paragraph title = new Paragraph("Rangliste", titleFont);
+
+                title.SpacingAfter = 12f;
+                document.Add(title);
+
+                // Columns:
+                // #, Name, Siege, Sets, Punkte, Gegenpunkte, Partner
+                PdfPTable table = new PdfPTable(7)
+                {
+                    WidthPercentage = 100f
+                };
+
+                table.SetWidths(new float[]
+                {
+            0.6f, // #
+            2.5f, // Name
+            1.0f, // Siege
+            1.0f, // Sets
+            1.0f, // Punkte
+            1.5f, // Gegenpunkte
+            3.4f  // Partner
+                });
+
+                AddHeaderCell(table, "#", headerFont);
+                AddHeaderCell(table, "Name", headerFont);
+                AddHeaderCell(table, "Siege", headerFont);
+                AddHeaderCell(table, "Sätze", headerFont);
+                AddHeaderCell(table, "Punkte", headerFont);
+                AddHeaderCell(table, "Gegenpunkte", headerFont);
+                AddHeaderCell(table, "Partner", headerFont);
+
+                int index = 1;
+
+                foreach (Spieler spieler in spielerListe)
+                {
+                    AddBodyCell(table, index.ToString(), cellFont);
+                    AddBodyCell(table, spieler.Name, cellFont);
+                    AddBodyCell(table, spieler.Siege.ToString(), cellFont);
+                    AddBodyCell(table, spieler.Sets.ToString(), cellFont);
+                    AddBodyCell(table, spieler.Punkte.ToString(), cellFont);
+                    AddBodyCell(table, spieler.Gegenpunkte.ToString(), cellFont);
+
+                    string partnerText = ConvertPartnerToString(spieler.Partner);
+
+                    AddBodyCell(table, partnerText, cellFont);
+
+                    index++;
+                }
+
+                document.Add(table);
+                document.Close();
+            }
+        }
+        private static string ConvertPartnerToString(
+    IEnumerable<Spieler> partnerList)
+        {
+            if (partnerList == null)
+                return string.Empty;
+
+            return string.Join(
+                "  |\t",
+                partnerList
+                    .Where(p => p != null)
+                    .Select(p => p.Name ?? string.Empty));
+        }
+
+        private static void AddHeaderCell(
+    PdfPTable table,
+    string text,
+    Font font)
+        {
+            PdfPCell cell = new PdfPCell(
+                new Phrase(text ?? string.Empty, font));
+
+            cell.BackgroundColor = new BaseColor(70, 110, 160);
+            cell.HorizontalAlignment = Element.ALIGN_CENTER;
+            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+            cell.Padding = 5f;
+
+            table.AddCell(cell);
+        }
+
+        private static void AddBodyCell(
+            PdfPTable table,
+            string text,
+            Font font)
+        {
+            PdfPCell cell = new PdfPCell(
+                new Phrase(text ?? string.Empty, font));
+
+            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+            cell.Padding = 4f;
+
+            table.AddCell(cell);
+        }
+
+
     }
 }
