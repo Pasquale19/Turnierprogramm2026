@@ -21,6 +21,7 @@ namespace Turnierprogramm2.Views
             LayoutRoot.DataContext = this;
             IEnumerable<Spieler> sortedKinder = kinder.OrderByDescending(x => x.Siege).ThenByDescending(x => x.Sets).ThenByDescending(x => x.Punkte).ThenBy(x => x.Gegenpunkte);
             IEnumerable<Spieler> sortedadults = adults.OrderByDescending(x => x.Siege).ThenByDescending(x => x.Sets).ThenByDescending(x => x.Punkte).ThenBy(x => x.Gegenpunkte);
+
             Player[0] = new ObservableCollection<Spieler>(sortedKinder);
             Player[1] = new ObservableCollection<Spieler>(sortedadults);
         }
